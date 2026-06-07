@@ -1,0 +1,43 @@
+@* Widok pojedynczego przepisu. Model to jeden obiekt Recipe. *@
+@model Recipe
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<article class="recipe-detail">
+    @* Link powrotny do listy przepisów *@
+    <a asp-action="Index" class="back-link">← Powrót do przepisów</a>
+
+    <header class="recipe-detail-header">
+        <h1>@Model.Title</h1>
+        <p class="meta">
+            <span class="badge-kat">@Model.Category?.Name</span>
+            <span class="time">⏱ @Model.PrepTimeMinutes minut</span>
+        </p>
+    </header>
+
+    @* Zdjęcie dania *@
+    <img class="recipe-detail-img" src="@Model.ImageUrl" alt="Zdjęcie dania: @Model.Title" />
+
+    @* Sekcja ze składnikami — lista punktowana *@
+    <section class="recipe-section" aria-label="Składniki">
+        <h2>Składniki</h2>
+        <ul>
+            @foreach (var skladnik in Model.Ingredients)
+            {
+                <li>@skladnik</li>
+            }
+        </ul>
+    </section>
+
+    @* Sekcja z krokami — lista numerowana *@
+    <section class="recipe-section" aria-label="Przygotowanie">
+        <h2>Przygotowanie</h2>
+        <ol>
+            @foreach (var krok in Model.Steps)
+            {
+                <li>@krok</li>
+            }
+        </ol>
+    </section>
+</article>

@@ -1,0 +1,338 @@
+/* =========================================================
+   SmaczaPL — własne style portalu kulinarnego
+   Plik: wwwroot/css/site.css
+   Tu trzymamy WŁASNY CSS (Bootstrap dołączamy osobno).
+   Responsywność (RWD) robimy przez CSS Grid, Flexbox i @media.
+   ========================================================= */
+
+/* Zmienne z kolorami — motyw można zmienić w jednym miejscu */
+:root {
+    --kolor-glowny: #e8590c;        /* pomarańczowy akcent */
+    --kolor-glowny-ciemny: #c64b06;
+    --kolor-tlo: #fff8f2;
+    --kolor-tekst: #2b2b2b;
+    --kolor-karta: #ffffff;
+    --cien: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Podstawowe ustawienia strony */
+html {
+    font-size: 16px;
+}
+
+/* Body jako kolumna flexbox — dzięki temu stopka trzyma się dołu strony */
+body {
+    margin: 0;
+    background-color: var(--kolor-tlo);
+    color: var(--kolor-tekst);
+    font-family: "Segoe UI", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Główna treść rośnie, żeby wypchnąć stopkę na sam dół */
+.smacza-main {
+    flex: 1 0 auto;
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+/* ---------- GÓRNE MENU (navbar) ---------- */
+.smacza-navbar {
+    background-color: #ffffff;
+    box-shadow: var(--cien);
+}
+
+.smacza-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--kolor-glowny) !important;
+}
+
+.smacza-navbar .nav-link {
+    color: var(--kolor-tekst);
+    font-weight: 600;
+}
+
+.smacza-navbar .nav-link:hover {
+    color: var(--kolor-glowny);
+}
+
+/* ---------- SEKCJA POWITALNA ---------- */
+.hero {
+    text-align: center;
+    padding: 1rem 1rem 0.5rem;
+}
+
+.hero h1 {
+    color: var(--kolor-glowny);
+    font-weight: 800;
+}
+
+.hero p {
+    color: #6b6b6b;
+    max-width: 600px;
+    margin: 0.5rem auto 0;
+}
+
+/* ---------- FILTRY I WYSZUKIWARKA (Flexbox) ---------- */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1.5rem 0;
+}
+
+.search-box {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 220px;
+}
+
+.search-box label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.search-box input {
+    padding: 0.6rem 0.9rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--kolor-glowny);
+}
+
+/* Przyciski kategorii — Flexbox z zawijaniem */
+.category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.cat-btn {
+    border: 2px solid var(--kolor-glowny);
+    background: transparent;
+    color: var(--kolor-glowny);
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s ease;
+}
+
+.cat-btn:hover {
+    background: #ffe8d6;
+}
+
+/* Aktywny (wybrany) przycisk kategorii */
+.cat-btn.active {
+    background: var(--kolor-glowny);
+    color: #ffffff;
+}
+
+/* ---------- SIATKA PRZEPISÓW (CSS GRID) ---------- */
+.recipe-grid {
+    display: grid;
+    /* Tyle kolumn, ile się zmieści; każda min. 250px szerokości */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Pojedyncza karta przepisu */
+.recipe-card {
+    background: var(--kolor-karta);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--cien);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Ukrywanie karty przez JavaScript (atrybut hidden).
+   Reguła z [hidden] jest ważniejsza niż domyślny wygląd karty. */
+.recipe-card[hidden] {
+    display: none;
+}
+
+.recipe-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.recipe-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.recipe-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.recipe-card-body {
+    padding: 1rem;
+}
+
+.recipe-card-body h2 {
+    font-size: 1.15rem;
+    margin: 0.5rem 0 0.25rem;
+}
+
+/* Etykieta kategorii (mały "znaczek") */
+.badge-kat {
+    display: inline-block;
+    background: #ffe8d6;
+    color: var(--kolor-glowny-ciemny);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.time {
+    color: #6b6b6b;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Komunikat o braku wyników wyszukiwania */
+#noResults {
+    text-align: center;
+    padding: 2rem;
+    color: #999;
+    font-style: italic;
+}
+
+/* ---------- WIDOK SZCZEGÓŁÓW PRZEPISU ---------- */
+.recipe-detail {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--kolor-glowny);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.recipe-detail-header h1 {
+    color: var(--kolor-glowny);
+    font-weight: 800;
+}
+
+.recipe-detail-header .meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.recipe-detail-img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin: 1rem 0;
+}
+
+.recipe-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--cien);
+}
+
+.recipe-section h2 {
+    color: var(--kolor-glowny);
+    font-size: 1.3rem;
+    border-bottom: 2px solid #ffe8d6;
+    padding-bottom: 0.5rem;
+}
+
+.recipe-section ul,
+.recipe-section ol {
+    padding-left: 1.5rem;
+    line-height: 1.8;
+}
+
+/* ---------- STRONA INFORMACYJNA ("O serwisie") ---------- */
+.info-page {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: var(--cien);
+    line-height: 1.7;
+}
+
+.info-page h1 {
+    color: var(--kolor-glowny);
+}
+
+/* ---------- STOPKA ---------- */
+.smacza-footer {
+    background: #2b2b2b;
+    color: #dddddd;
+    text-align: center;
+    padding: 1rem;
+    flex-shrink: 0;
+}
+
+.smacza-footer p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* =========================================================
+   RWD — wersje na tablety i telefony (zapytania @media)
+   ========================================================= */
+
+/* Tablety i mniejsze ekrany */
+@media (max-width: 768px) {
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .category-buttons {
+        justify-content: center;
+    }
+
+    .recipe-detail-img {
+        height: 220px;
+    }
+}
+
+/* Telefony */
+@media (max-width: 480px) {
+    .recipe-grid {
+        grid-template-columns: 1fr; /* jedna kolumna na wąskim ekranie */
+    }
+
+    .smacza-brand {
+        font-size: 1.2rem;
+    }
+
+    .recipe-detail-header .meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}

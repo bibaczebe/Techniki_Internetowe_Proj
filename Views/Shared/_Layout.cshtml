@@ -1,0 +1,58 @@
+@* Wspólny szablon wszystkich stron: górne menu (header/nav) + treść (main) + stopka (footer).
+   Używamy semantycznych znaczników HTML5, żeby strona przeszła walidację W3C. *@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SmaczaPL</title>
+    @* Bootstrap 5 (style) z plików lokalnych *@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @* Nasz własny arkusz stylów *@
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Techniki_Internetowe_Proj.styles.css" asp-append-version="true" />
+</head>
+<body>
+    @* NAGŁÓWEK STRONY z górnym menu *@
+    <header>
+        <nav class="navbar navbar-expand-sm smacza-navbar">
+            <div class="container">
+                <a class="navbar-brand smacza-brand" asp-controller="Home" asp-action="Index">🍳 SmaczaPL</a>
+                @* Przycisk "hamburger" widoczny na telefonach (obsługiwany przez Bootstrap) *@
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu"
+                        aria-controls="mainMenu" aria-expanded="false" aria-label="Przełącz menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainMenu">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Przepisy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">O serwisie</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    @* GŁÓWNA TREŚĆ strony *@
+    <main class="container smacza-main">
+        @RenderBody()
+    </main>
+
+    @* STOPKA *@
+    <footer class="smacza-footer">
+        <div class="container">
+            <p>&copy; 2026 SmaczaPL — portal kulinarny. Projekt na Techniki Internetowe.</p>
+        </div>
+    </footer>
+
+    @* Skrypty: tylko Bootstrap (potrzebny do menu na telefonie) + nasz własny plik.
+       Nie używamy jQuery — całą interaktywność piszemy w czystym JavaScript. *@
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

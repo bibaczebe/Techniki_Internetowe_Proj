@@ -1,0 +1,60 @@
+@* Widok strony głównej. Model to lista przepisów przekazana z kontrolera. *@
+@model List<Recipe>
+@{
+    ViewData["Title"] = "Przepisy";
+    // Lista kategorii przekazana przez ViewBag — użyjemy jej do przycisków filtra.
+    // Jeśli z jakiegoś powodu byłaby pusta, używamy pustej listy (zabezpieczenie przed null).
+    var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
+}
+
+@* Sekcja powitalna *@
+<section class="hero">
+    <h1>Witaj w SmaczaPL 🍽️</h1>
+    <p>Przeglądaj sprawdzone przepisy, filtruj po kategorii i szukaj swojego ulubionego dania.</p>
+</section>
+
+@* Sekcja z filtrami: wyszukiwarka po tytule + przyciski kategorii *@
+<section class="filters" aria-label="Filtrowanie i wyszukiwanie przepisów">
+    <div class="search-box">
+        <label for="searchInput">Szukaj przepisu</label>
+        <input type="search" id="searchInput" placeholder="np. naleśniki..." autocomplete="off" />
+    </div>
+
+    <div class="category-buttons" id="categoryButtons" role="group" aria-label="Filtruj po kategorii">
+        @* Przycisk pokazujący wszystkie przepisy *@
+        <button type="button" class="cat-btn active" data-category="all">Wszystkie</button>
+        @* Po jednym przycisku dla każdej kategorii *@
+        @foreach (var c in categories)
+        {
+            <button type="button" class="cat-btn" data-category="@c.Id">@c.Name</button>
+        }
+    </div>
+</section>
+
+@* Sekcja z listą przepisów — karty ułożone w siatce CSS Grid *@
+<section aria-label="Lista przepisów">
+    <div class="recipe-grid" id="recipeGrid">
+        @foreach (var recipe in Model)
+        {
+            @* data-title i data-category są używane przez JavaScript do filtrowania *@
+            <article class="recipe-card" data-title="@recipe.Title.ToLower()" data-category="@recipe.CategoryId">
+                <a asp-controller="Home" asp-action="Details" asp-route-id="@recipe.Id">
+                    <img src="@recipe.ImageUrl" alt="Zdjęcie dania: @recipe.Title" />
+                    <div class="recipe-card-body">
+                        <span class="badge-kat">@recipe.Category?.Name</span>
+                        <h2>@recipe.Title</h2>
+                        <p class="time">⏱ @recipe.PrepTimeMinutes min</p>
+                    </div>
+                </a>
+            </article>
+        }
+    </div>
+
+    @* Komunikat pokazywany przez JavaScript, gdy nic nie pasuje do wyszukiwania *@
+    <p id="noResults" hidden>Brak przepisów spełniających kryteria.</p>
+</section>
+
+@* Plik z naszą interaktywnością dołączamy tylko na tej stronie *@
+@section Scripts {
+    <script src="~/js/recipes.js" asp-append-version="true"></script>
+}
