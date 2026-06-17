@@ -1,0 +1,58 @@
+@* Strona "Co mam w lodówce". Model to lista przepisów (do przeszukania przez JavaScript). *@
+@model List<Recipe>
+@{
+    ViewData["Title"] = "Co mam w lodówce?";
+    var allIngredients = ViewBag.AllIngredients as List<string> ?? new List<string>();
+}
+
+<section class="fridge-page">
+    <h1>Co mam w lodówce? 🧊</h1>
+    <p>Zaznacz składniki, które masz w domu, a pokażemy, co możesz z nich ugotować.</p>
+
+    <form id="fridgeForm" class="fridge-form">
+        <fieldset>
+            <legend>Twoje składniki</legend>
+            <div class="ingredient-checkboxes">
+                @foreach (var ing in allIngredients)
+                {
+                    <label class="ing-check">
+                        <input type="checkbox" value="@ing" /> @ing
+                    </label>
+                }
+            </div>
+        </fieldset>
+        <div class="fridge-actions">
+            <button type="submit" class="hero-btn hero-btn-primary">Szukaj przepisów</button>
+            <button type="button" id="clearFridge" class="hero-btn hero-btn-outline">Wyczyść</button>
+        </div>
+    </form>
+
+    <section class="fridge-results" aria-label="Pasujące przepisy">
+        <p id="fridgeHint">Zaznacz składniki i kliknij „Szukaj przepisów".</p>
+
+        <div class="recipe-grid" id="fridgeGrid">
+            @foreach (var recipe in Model)
+            {
+                @* data-ingredients zawiera nazwy składników rozdzielone znakiem "|" — czyta je JavaScript *@
+                <article class="recipe-card fridge-card" hidden
+                         data-title="@recipe.Title"
+                         data-ingredients="@string.Join("|", recipe.Ingredients.Select(i => i.Name))">
+                    <a asp-controller="Home" asp-action="Details" asp-route-id="@recipe.Id">
+                        <img src="@recipe.ImageUrl" alt="Zdjęcie dania: @recipe.Title" />
+                        <div class="recipe-card-body">
+                            <span class="badge-kat">@recipe.Category?.Name</span>
+                            <h2>@recipe.Title</h2>
+                            <p class="time">⏱ @recipe.PrepTimeMinutes min</p>
+                            @* Notkę o dopasowaniu (czego brakuje / można zrobić) wpisuje JavaScript *@
+                            <p class="match-note"></p>
+                        </div>
+                    </a>
+                </article>
+            }
+        </div>
+    </section>
+</section>
+
+@section Scripts {
+    <script src="~/js/fridge.js" asp-append-version="true"></script>
+}

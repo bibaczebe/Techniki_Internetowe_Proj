@@ -336,3 +336,294 @@ body {
         gap: 0.5rem;
     }
 }
+
+/* =========================================================
+   NOWE FUNKCJE: przyciski hero, formularz dodawania, lodówka
+   ========================================================= */
+
+/* Przyciski w sekcji powitalnej */
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 1.25rem;
+}
+
+.hero-btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: 2px solid var(--kolor-glowny);
+    font-size: 1rem;
+    transition: all 0.15s ease;
+}
+
+.hero-btn-primary {
+    background: var(--kolor-glowny);
+    color: #ffffff;
+}
+
+.hero-btn-primary:hover {
+    background: var(--kolor-glowny-ciemny);
+    color: #ffffff;
+}
+
+.hero-btn-outline {
+    background: transparent;
+    color: var(--kolor-glowny);
+}
+
+.hero-btn-outline:hover {
+    background: #ffe8d6;
+}
+
+/* ---------- FORMULARZE / STRONY (dodawanie + lodówka) ---------- */
+.form-page,
+.fridge-page {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-page h1,
+.fridge-page h1 {
+    color: var(--kolor-glowny);
+    font-weight: 800;
+}
+
+.form-note {
+    background: #fff3cd;
+    border: 1px solid #ffe69c;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+}
+
+.recipe-form {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--cien);
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.form-row label {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.recipe-form input,
+.recipe-form select,
+.recipe-form textarea {
+    padding: 0.55rem 0.8rem;
+    border: 2px solid #dddddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.recipe-form input:focus,
+.recipe-form select:focus,
+.recipe-form textarea:focus {
+    outline: none;
+    border-color: var(--kolor-glowny);
+}
+
+/* Dwie kolumny obok siebie (kategoria + czas) */
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Sekcja składników w formularzu */
+.ingredients-fieldset {
+    border: 2px solid #eeeeee;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.ingredients-fieldset legend {
+    font-weight: 700;
+    color: var(--kolor-glowny);
+    padding: 0 0.5rem;
+    width: auto;
+    font-size: 1rem;
+}
+
+/* Jeden wiersz składnika (Flexbox) */
+.ingredient-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-items: center;
+}
+
+.ingredient-row .ing-name {
+    flex: 2 1 140px;
+}
+
+.ingredient-row .ing-amount {
+    flex: 0 0 80px;
+}
+
+.ingredient-row .ing-unit {
+    flex: 1 1 100px;
+}
+
+.ing-remove {
+    border: none;
+    background: #ffe0e0;
+    color: #c0392b;
+    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    cursor: pointer;
+    font-weight: 700;
+    flex: 0 0 auto;
+}
+
+.ing-remove:hover {
+    background: #ffc9c9;
+}
+
+.btn-add-ingredient {
+    border: 2px dashed var(--kolor-glowny);
+    background: transparent;
+    color: var(--kolor-glowny);
+    border-radius: 8px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-add-ingredient:hover {
+    background: #ffe8d6;
+}
+
+/* ---------- PODGLĄD DODANYCH PRZEPISÓW ---------- */
+.preview-section {
+    margin-top: 2rem;
+}
+
+.preview-section h2 {
+    color: var(--kolor-glowny);
+}
+
+.preview-card-top {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    background: linear-gradient(135deg, #ffd166, #ff9a3c);
+}
+
+.preview-ingredients {
+    margin: 0.5rem 0 0;
+    padding-left: 1.2rem;
+    font-size: 0.9rem;
+    color: #555555;
+}
+
+/* ---------- "CO MAM W LODÓWCE" ---------- */
+.fridge-form {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--cien);
+    margin: 1rem 0;
+}
+
+.fridge-form fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.fridge-form legend {
+    font-weight: 700;
+    color: var(--kolor-glowny);
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+/* Składniki jako "kafelki" do zaznaczania (Flexbox z zawijaniem) */
+.ingredient-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.ing-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #f5f5f5;
+    border: 2px solid #eeeeee;
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.ing-check:hover {
+    border-color: var(--kolor-glowny);
+}
+
+.fridge-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.fridge-results {
+    margin-top: 1.5rem;
+}
+
+#fridgeHint {
+    color: #777777;
+    font-style: italic;
+}
+
+/* Notka o dopasowaniu na karcie wyniku (domyślnie: czego brakuje) */
+.match-note {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin: 0.4rem 0 0;
+    color: #c0392b;
+}
+
+/* Przepis w pełni wykonalny — zielona obwódka i zielona notka */
+.fridge-card.can-make {
+    outline: 3px solid #2f9e44;
+}
+
+.fridge-card.can-make .match-note {
+    color: #2f9e44;
+}
+
+/* RWD dla nowych elementów (telefony) */
+@media (max-width: 480px) {
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .ingredient-row {
+        flex-wrap: wrap;
+    }
+
+    .fridge-actions {
+        flex-direction: column;
+    }
+}

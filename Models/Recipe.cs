@@ -8,8 +8,8 @@ namespace Techniki_Internetowe_Proj.Models
         public string Title { get; set; } = "";    // tytuł przepisu
         public string ImageUrl { get; set; } = ""; // ścieżka do zdjęcia (plik w wwwroot/images)
 
-        // Lista składników — każdy składnik to osobny tekst (w widoku pokażemy jako listę punktowaną)
-        public List<string> Ingredients { get; set; } = new List<string>();
+        // Lista składników — każdy składnik ma nazwę, ilość i jednostkę (np. 200 g mąki)
+        public List<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
 
         // Kroki przygotowania — każdy krok to osobny tekst (w widoku pokażemy jako listę numerowaną)
         public List<string> Steps { get; set; } = new List<string>();

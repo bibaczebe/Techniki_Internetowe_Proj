@@ -25,7 +25,7 @@
         <ul>
             @foreach (var skladnik in Model.Ingredients)
             {
-                <li>@skladnik</li>
+                <li>@skladnik.Amount @skladnik.Unit @skladnik.Name</li>
             }
         </ul>
     </section>

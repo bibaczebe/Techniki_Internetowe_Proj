@@ -11,6 +11,11 @@
 <section class="hero">
     <h1>Witaj w SmaczaPL 🍽️</h1>
     <p>Przeglądaj sprawdzone przepisy, filtruj po kategorii i szukaj swojego ulubionego dania.</p>
+    @* Przyciski prowadzące do nowych funkcji *@
+    <div class="hero-actions">
+        <a class="hero-btn hero-btn-primary" asp-controller="Home" asp-action="Fridge">🧊 Co mam w lodówce?</a>
+        <a class="hero-btn hero-btn-outline" asp-controller="Home" asp-action="Add">➕ Dodaj przepis</a>
+    </div>
 </section>
 
 @* Sekcja z filtrami: wyszukiwarka po tytule + przyciski kategorii *@

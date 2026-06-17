@@ -1,0 +1,84 @@
+@* Strona z formularzem dodawania przepisu.
+   Obsługa wysyłki jest w czystym JavaScript (add-recipe.js) i tylko na ekranie. *@
+@{
+    ViewData["Title"] = "Dodaj przepis";
+    var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
+    var allIngredients = ViewBag.AllIngredients as List<string> ?? new List<string>();
+    var units = ViewBag.Units as List<string> ?? new List<string>();
+}
+
+<section class="form-page">
+    <h1>Dodaj przepis</h1>
+    <p class="form-note">
+        Uwaga: to wersja frontendowa — dodany przepis pojawi się tylko na tej stronie
+        (na potrzeby podglądu) i zniknie po odświeżeniu. Trwałe zapisywanie do bazy dorobi backend.
+    </p>
+
+    <form id="addRecipeForm" class="recipe-form" novalidate>
+        <div class="form-row">
+            <label for="recipeTitle">Nazwa dania</label>
+            <input type="text" id="recipeTitle" placeholder="np. Omlet z warzywami" required />
+        </div>
+
+        <div class="form-grid-2">
+            <div class="form-row">
+                <label for="recipeCategory">Kategoria</label>
+                <select id="recipeCategory" required>
+                    @foreach (var c in categories)
+                    {
+                        <option value="@c.Name">@c.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-row">
+                <label for="recipeTime">Czas przygotowania (min)</label>
+                <input type="number" id="recipeTime" min="1" value="30" required />
+            </div>
+        </div>
+
+        <fieldset class="ingredients-fieldset">
+            <legend>Składniki</legend>
+            @* Tutaj JavaScript dodaje kolejne wiersze składników *@
+            <div id="ingredientList"></div>
+            <button type="button" id="addIngredientBtn" class="btn-add-ingredient">+ Dodaj składnik</button>
+        </fieldset>
+
+        <div class="form-row">
+            <label for="recipeSteps">Kroki przygotowania (jeden krok w linii)</label>
+            <textarea id="recipeSteps" rows="4" placeholder="Pokrój warzywa...&#10;Usmaż na patelni..."></textarea>
+        </div>
+
+        <button type="submit" class="hero-btn hero-btn-primary">Dodaj przepis</button>
+    </form>
+
+    @* Szablon jednego wiersza składnika — JavaScript go klonuje przy dodawaniu *@
+    <template id="ingredientRowTemplate">
+        <div class="ingredient-row">
+            <select class="ing-name" aria-label="Składnik">
+                @foreach (var ing in allIngredients)
+                {
+                    <option value="@ing">@ing</option>
+                }
+            </select>
+            <input type="number" class="ing-amount" min="0" step="any" value="1" aria-label="Ilość" />
+            <select class="ing-unit" aria-label="Jednostka">
+                @foreach (var u in units)
+                {
+                    <option value="@u">@u</option>
+                }
+            </select>
+            <button type="button" class="ing-remove" aria-label="Usuń składnik">✕</button>
+        </div>
+    </template>
+
+    @* Podgląd dodanych przepisów (wypełniany przez JavaScript) *@
+    <section class="preview-section" aria-label="Dodane przepisy">
+        <h2>Twoje dodane przepisy</h2>
+        <p id="previewEmpty">Nie dodałeś jeszcze żadnego przepisu.</p>
+        <div class="recipe-grid" id="previewGrid"></div>
+    </section>
+</section>
+
+@section Scripts {
+    <script src="~/js/add-recipe.js" asp-append-version="true"></script>
+}
