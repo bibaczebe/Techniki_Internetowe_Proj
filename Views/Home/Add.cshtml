@@ -14,7 +14,7 @@
         (na potrzeby podglądu) i zniknie po odświeżeniu. Trwałe zapisywanie do bazy dorobi backend.
     </p>
 
-    <form id="addRecipeForm" class="recipe-form" novalidate>
+    <form id="addRecipeForm" class="recipe-form" asp-controller="Recipe" asp-action="UploadImage" method="post" enctype="multipart/form-data">
         <div class="form-row">
             <label for="recipeTitle">Nazwa dania</label>
             <input type="text" id="recipeTitle" placeholder="np. Omlet z warzywami" required />
@@ -34,6 +34,10 @@
                 <label for="recipeTime">Czas przygotowania (min)</label>
                 <input type="number" id="recipeTime" min="1" value="30" required />
             </div>
+        </div>
+        <div class="form-row">
+            <label for="imageFile">Zdjęcie przepisu</label>
+            <input type="file" id="imageFile" name="imageFile" accept="image/*" class="form-control" />
         </div>
 
         <fieldset class="ingredients-fieldset">
