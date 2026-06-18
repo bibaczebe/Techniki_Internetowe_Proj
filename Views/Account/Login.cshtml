@@ -1,0 +1,38 @@
+﻿@model Techniki_Internetowe_Proj.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Logowanie";
+}
+
+<h2>Formularz Logowania (Szkielet Backendowy)</h2>
+
+<form asp-action="Login" method="post">
+    <div asp-validation-summary="All" style="color:red; font-weight:bold;"></div>
+
+    <div style="margin-bottom: 15px;">
+        <label asp-for="Email"></label><br />
+        <input asp-for="Email" style="width: 300px; padding: 5px;" />
+        <span asp-validation-for="Email" style="color:red;"></span>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label asp-for="Password"></label><br />
+        <input asp-for="Password" style="width: 300px; padding: 5px;" />
+        <span asp-validation-for="Password" style="color:red;"></span>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <input asp-for="RememberMe" />
+        <label asp-for="RememberMe"></label>
+    </div>
+
+    <button type="submit" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; cursor: pointer;">
+        Zaloguj się
+    </button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
