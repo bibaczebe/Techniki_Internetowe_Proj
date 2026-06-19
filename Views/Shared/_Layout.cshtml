@@ -15,52 +15,54 @@
 <body>
     @* NAGŁÓWEK STRONY z górnym menu *@
     <header>
-        <nav class="navbar navbar-expand-sm smacza-navbar">
-            @if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                <span class="nav-user">@User.Identity.Name</span>
-                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                    <button type="submit" class="hero-btn">Wyloguj</button>
-                </form>
-            }
-            else
-            {
-                <a asp-controller="Account" asp-action="Login">Zaloguj się</a>
-                <a asp-controller="Account" asp-action="Register">Zarejestruj się</a>
-            }
-            <div class="container">
-                <a class="navbar-brand smacza-brand" asp-controller="Home" asp-action="Index">🍳 SmaczaPL</a>
-                @* Przycisk "hamburger" widoczny na telefonach (obsługiwany przez Bootstrap) *@
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu"
-                        aria-controls="mainMenu" aria-expanded="false" aria-label="Przełącz menu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="mainMenu">
-                    <ul class="navbar-nav ms-auto">
+    <nav class="navbar navbar-expand-sm smacza-navbar">
+        <div class="container">
+            <a class="navbar-brand smacza-brand" asp-controller="Home" asp-action="Index">🍳 SmaczaPL</a>
+            @* Przycisk "hamburger" widoczny na telefonach (obsługiwany przez Bootstrap) *@
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu"
+                    aria-controls="mainMenu" aria-expanded="false" aria-label="Przełącz menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainMenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Przepisy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Fridge">Co mam w lodówce?</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Add">Dodaj przepis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Privacy">O serwisie</a>
+                    </li>
+
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Przepisy</a>
+                            <span class="nav-link nav-user">@User.Identity.Name</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Fridge">Co mam w lodówce?</a>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="nav-link btn btn-link">Wyloguj</button>
+                            </form>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Add">Dodaj przepis</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">O serwisie</a>
-                        </li>
-                        @* Linki do logowania i rejestracji (strony kolegi z backendu) *@
+                    }
+                    else
+                    {
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Account" asp-action="Login">Zaloguj</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link nav-link-cta" asp-controller="Account" asp-action="Register">Rejestracja</a>
                         </li>
-                    </ul>
-                </div>
+                    }
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
+</header>
 
     @* GŁÓWNA TREŚĆ strony *@
     <main class="container smacza-main">
