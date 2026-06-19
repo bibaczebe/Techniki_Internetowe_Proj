@@ -613,6 +613,59 @@ body {
     color: #2f9e44;
 }
 
+/* Pole wpisywania składnika w lodówce (Flexbox: pole + przycisk) */
+.fridge-input-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.fridge-input-row input {
+    flex: 1 1 auto;
+    padding: 0.55rem 0.8rem;
+    border: 2px solid #dddddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.fridge-input-row input:focus {
+    outline: none;
+    border-color: var(--kolor-glowny);
+}
+
+/* "Chipy" — wpisane składniki użytkownika */
+.fridge-chips {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--kolor-glowny);
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.chip-remove {
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0;
+}
+
 /* RWD dla nowych elementów (telefony) */
 @media (max-width: 480px) {
     .form-grid-2 {
@@ -626,4 +679,96 @@ body {
     .fridge-actions {
         flex-direction: column;
     }
+}
+
+/* ---------- LOGOWANIE / REJESTRACJA ---------- */
+/* Wyróżniony link "Rejestracja" w menu */
+.nav-link-cta {
+    color: var(--kolor-glowny) !important;
+    font-weight: 700;
+}
+
+.auth-page {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.auth-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: var(--cien);
+    padding: 2rem;
+    width: 100%;
+    max-width: 420px;
+}
+
+.auth-card h1 {
+    color: var(--kolor-glowny);
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    text-align: center;
+}
+
+.auth-sub {
+    text-align: center;
+    color: #777777;
+    margin-bottom: 1.5rem;
+}
+
+.auth-form .form-row {
+    margin-bottom: 1rem;
+}
+
+.auth-input {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 2px solid #dddddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.auth-input:focus {
+    outline: none;
+    border-color: var(--kolor-glowny);
+}
+
+/* Wiersz z checkboxem "zapamiętaj mnie" */
+.form-check-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-check-row label {
+    margin: 0;
+}
+
+.auth-submit {
+    width: 100%;
+    text-align: center;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.auth-switch a {
+    color: var(--kolor-glowny);
+    font-weight: 600;
+}
+
+/* Komunikaty walidacji (czerwone) */
+.auth-validation {
+    color: #c0392b;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.field-error {
+    color: #c0392b;
+    font-size: 0.85rem;
 }

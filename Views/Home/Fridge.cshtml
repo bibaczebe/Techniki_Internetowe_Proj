@@ -1,34 +1,35 @@
-@* Strona "Co mam w lodówce". Model to lista przepisów (do przeszukania przez JavaScript). *@
+@* Strona "Co mam w lodówce". Model to lista przepisów (do przeszukania przez JavaScript).
+   Składniki WPISUJE się w polu tekstowym (z podpowiedziami) i dodaje jako "chipy". *@
 @model List<Recipe>
 @{
     ViewData["Title"] = "Co mam w lodówce?";
-    var allIngredients = ViewBag.AllIngredients as List<string> ?? new List<string>();
 }
 
 <section class="fridge-page">
     <h1>Co mam w lodówce? 🧊</h1>
-    <p>Zaznacz składniki, które masz w domu, a pokażemy, co możesz z nich ugotować.</p>
+    <p>Wpisz składniki, które masz w domu, a pokażemy, co możesz z nich ugotować.</p>
 
     <form id="fridgeForm" class="fridge-form">
-        <fieldset>
-            <legend>Twoje składniki</legend>
-            <div class="ingredient-checkboxes">
-                @foreach (var ing in allIngredients)
-                {
-                    <label class="ing-check">
-                        <input type="checkbox" value="@ing" /> @ing
-                    </label>
-                }
-            </div>
-        </fieldset>
+        <div class="fridge-input-row">
+            <input type="text" id="fridgeInput" list="ingredientsDatalist"
+                   placeholder="wpisz składnik, np. jajka..." autocomplete="off" aria-label="Składnik" />
+            <button type="button" id="addFridgeIngredient" class="hero-btn hero-btn-outline">+ Dodaj</button>
+        </div>
+
+        @* Tutaj JavaScript dodaje wpisane składniki jako "chipy" *@
+        <ul class="fridge-chips" id="fridgeChips" aria-label="Twoje składniki"></ul>
+
         <div class="fridge-actions">
             <button type="submit" class="hero-btn hero-btn-primary">Szukaj przepisów</button>
             <button type="button" id="clearFridge" class="hero-btn hero-btn-outline">Wyczyść</button>
         </div>
     </form>
 
+    @* Lista podpowiedzi składników (wypełnia ją JavaScript z pliku JSON) *@
+    <datalist id="ingredientsDatalist"></datalist>
+
     <section class="fridge-results" aria-label="Pasujące przepisy">
-        <p id="fridgeHint">Zaznacz składniki i kliknij „Szukaj przepisów".</p>
+        <p id="fridgeHint">Dodaj składniki i kliknij „Szukaj przepisów".</p>
 
         <div class="recipe-grid" id="fridgeGrid">
             @foreach (var recipe in Model)
@@ -54,5 +55,6 @@
 </section>
 
 @section Scripts {
+    <script src="~/js/ingredients-datalist.js" asp-append-version="true"></script>
     <script src="~/js/fridge.js" asp-append-version="true"></script>
 }

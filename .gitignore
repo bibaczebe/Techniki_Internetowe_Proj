@@ -482,3 +482,10 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Zdjecia wgrywane przez uzytkownika (upload backendu) - nie trzymamy ich w repo.
+# Nasze placeholdery to pliki .svg i one sa wersjonowane normalnie.
+/wwwroot/images/*.jpg
+/wwwroot/images/*.jpeg
+/wwwroot/images/*.png
+/wwwroot/images/*.gif

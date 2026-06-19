@@ -18,6 +18,7 @@ public class HomeController : Controller
     //  UWAGA: poniższe listy to dane przykładowe trzymane w pamięci.
     //  Służą TYLKO do zbudowania i pokazania frontendu.
     //  Backend (EF Core / baza danych) PODMIENI je później na dane z bazy.
+    //  Bazę składników (do podpowiedzi) trzymamy w wwwroot/data/ingredients.json.
     // ================================================================
 
     // Twardo zdefiniowana lista jednostek miary (używana w formularzu dodawania).
@@ -26,44 +27,36 @@ public class HomeController : Controller
         "szt.", "g", "dag", "kg", "ml", "l", "szklanka", "łyżka", "łyżeczka", "szczypta", "ząbek"
     };
 
-    // Twardo zdefiniowana lista dostępnych składników (do formularza i do "lodówki").
-    private static readonly List<string> AllIngredients = new List<string>
-    {
-        "bulion warzywny", "budyń waniliowy", "bułka tarta", "cebula", "cukier", "cynamon",
-        "czosnek", "dżem", "jabłka", "jajka", "liść laurowy", "makaron", "makaron spaghetti",
-        "masło", "mąka", "mięso mielone", "mięso na rosół", "mleko", "natka pietruszki", "olej",
-        "oregano", "parmezan", "passata pomidorowa", "pieprz", "proszek do pieczenia", "ryż",
-        "schab", "sól", "spód z ciastek", "szczypiorek", "śmietana", "twaróg", "włoszczyzna",
-        "ziele angielskie", "ziemniaki"
-    };
-
     // Lista kategorii
     private static readonly List<Category> Categories = new List<Category>
     {
         new Category { Id = 1, Name = "Śniadania" },
         new Category { Id = 2, Name = "Obiady" },
         new Category { Id = 3, Name = "Zupy" },
-        new Category { Id = 4, Name = "Desery" }
+        new Category { Id = 4, Name = "Desery" },
+        new Category { Id = 5, Name = "Sałatki" },
+        new Category { Id = 6, Name = "Kolacje" },
+        new Category { Id = 7, Name = "Napoje" },
+        new Category { Id = 8, Name = "Przekąski" }
     };
 
-    // Lista przepisów
+    // Krótka metoda pomocnicza, żeby zwięźle tworzyć składniki.
+    private static Ingredient Skl(string name, double amount, string unit)
+    {
+        return new Ingredient { Name = name, Amount = amount, Unit = unit };
+    }
+
+    // Lista przepisów (na sztywno — backend podmieni na bazę)
     private static readonly List<Recipe> Recipes = new List<Recipe>
     {
         new Recipe
         {
-            Id = 1,
-            Title = "Naleśniki z dżemem",
-            ImageUrl = "/images/nalesniki.svg",
-            PrepTimeMinutes = 25,
-            CategoryId = 1,
+            Id = 1, Title = "Naleśniki z dżemem", ImageUrl = "/images/nalesniki.svg",
+            PrepTimeMinutes = 25, CategoryId = 1,
             Ingredients = new List<Ingredient>
             {
-                new Ingredient { Name = "jajka", Amount = 2, Unit = "szt." },
-                new Ingredient { Name = "mąka", Amount = 1, Unit = "szklanka" },
-                new Ingredient { Name = "mleko", Amount = 1, Unit = "szklanka" },
-                new Ingredient { Name = "sól", Amount = 1, Unit = "szczypta" },
-                new Ingredient { Name = "olej", Amount = 1, Unit = "łyżka" },
-                new Ingredient { Name = "dżem", Amount = 3, Unit = "łyżka" }
+                Skl("jajka", 2, "szt."), Skl("mąka", 1, "szklanka"), Skl("mleko", 1, "szklanka"),
+                Skl("sól", 1, "szczypta"), Skl("olej", 1, "łyżka"), Skl("dżem", 3, "łyżka")
             },
             Steps = new List<string>
             {
@@ -75,18 +68,12 @@ public class HomeController : Controller
         },
         new Recipe
         {
-            Id = 2,
-            Title = "Jajecznica na maśle",
-            ImageUrl = "/images/jajecznica.svg",
-            PrepTimeMinutes = 10,
-            CategoryId = 1,
+            Id = 2, Title = "Jajecznica na maśle", ImageUrl = "/images/jajecznica.svg",
+            PrepTimeMinutes = 10, CategoryId = 1,
             Ingredients = new List<Ingredient>
             {
-                new Ingredient { Name = "jajka", Amount = 3, Unit = "szt." },
-                new Ingredient { Name = "masło", Amount = 1, Unit = "łyżka" },
-                new Ingredient { Name = "sól", Amount = 1, Unit = "szczypta" },
-                new Ingredient { Name = "pieprz", Amount = 1, Unit = "szczypta" },
-                new Ingredient { Name = "szczypiorek", Amount = 1, Unit = "łyżka" }
+                Skl("jajka", 3, "szt."), Skl("masło", 1, "łyżka"), Skl("sól", 1, "szczypta"),
+                Skl("pieprz", 1, "szczypta"), Skl("szczypiorek", 1, "łyżka")
             },
             Steps = new List<string>
             {
@@ -97,20 +84,30 @@ public class HomeController : Controller
         },
         new Recipe
         {
-            Id = 3,
-            Title = "Spaghetti Bolognese",
-            ImageUrl = "/images/spaghetti.svg",
-            PrepTimeMinutes = 45,
-            CategoryId = 2,
+            Id = 3, Title = "Owsianka z owocami", ImageUrl = "/images/owsianka.svg",
+            PrepTimeMinutes = 10, CategoryId = 1,
             Ingredients = new List<Ingredient>
             {
-                new Ingredient { Name = "makaron spaghetti", Amount = 400, Unit = "g" },
-                new Ingredient { Name = "mięso mielone", Amount = 400, Unit = "g" },
-                new Ingredient { Name = "cebula", Amount = 1, Unit = "szt." },
-                new Ingredient { Name = "czosnek", Amount = 2, Unit = "ząbek" },
-                new Ingredient { Name = "passata pomidorowa", Amount = 500, Unit = "ml" },
-                new Ingredient { Name = "oregano", Amount = 1, Unit = "łyżeczka" },
-                new Ingredient { Name = "parmezan", Amount = 50, Unit = "g" }
+                Skl("płatki owsiane", 1, "szklanka"), Skl("mleko", 1, "szklanka"),
+                Skl("banan", 1, "szt."), Skl("miód", 1, "łyżka"), Skl("borówki", 50, "g")
+            },
+            Steps = new List<string>
+            {
+                "Zagotuj mleko i wsyp płatki owsiane.",
+                "Gotuj kilka minut, aż zgęstnieje.",
+                "Dodaj pokrojonego banana, borówki i miód."
+            }
+        },
+        new Recipe
+        {
+            Id = 4, Title = "Spaghetti Bolognese", ImageUrl = "/images/spaghetti.svg",
+            PrepTimeMinutes = 45, CategoryId = 2,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("makaron spaghetti", 400, "g"), Skl("mięso mielone", 400, "g"),
+                Skl("cebula", 1, "szt."), Skl("czosnek", 2, "ząbek"),
+                Skl("passata pomidorowa", 500, "ml"), Skl("oregano", 1, "łyżeczka"),
+                Skl("parmezan", 50, "g")
             },
             Steps = new List<string>
             {
@@ -122,21 +119,13 @@ public class HomeController : Controller
         },
         new Recipe
         {
-            Id = 4,
-            Title = "Kotlet schabowy z ziemniakami",
-            ImageUrl = "/images/schabowy.svg",
-            PrepTimeMinutes = 60,
-            CategoryId = 2,
+            Id = 5, Title = "Kotlet schabowy z ziemniakami", ImageUrl = "/images/schabowy.svg",
+            PrepTimeMinutes = 60, CategoryId = 2,
             Ingredients = new List<Ingredient>
             {
-                new Ingredient { Name = "schab", Amount = 4, Unit = "szt." },
-                new Ingredient { Name = "jajka", Amount = 2, Unit = "szt." },
-                new Ingredient { Name = "bułka tarta", Amount = 1, Unit = "szklanka" },
-                new Ingredient { Name = "mąka", Amount = 3, Unit = "łyżka" },
-                new Ingredient { Name = "sól", Amount = 1, Unit = "szczypta" },
-                new Ingredient { Name = "pieprz", Amount = 1, Unit = "szczypta" },
-                new Ingredient { Name = "ziemniaki", Amount = 1, Unit = "kg" },
-                new Ingredient { Name = "olej", Amount = 100, Unit = "ml" }
+                Skl("schab", 4, "szt."), Skl("jajka", 2, "szt."), Skl("bułka tarta", 1, "szklanka"),
+                Skl("mąka", 3, "łyżka"), Skl("sól", 1, "szczypta"), Skl("pieprz", 1, "szczypta"),
+                Skl("ziemniaki", 1, "kg"), Skl("olej", 100, "ml")
             },
             Steps = new List<string>
             {
@@ -148,20 +137,31 @@ public class HomeController : Controller
         },
         new Recipe
         {
-            Id = 5,
-            Title = "Rosół z makaronem",
-            ImageUrl = "/images/rosol.svg",
-            PrepTimeMinutes = 90,
-            CategoryId = 3,
+            Id = 6, Title = "Pierogi ruskie", ImageUrl = "/images/pierogi.svg",
+            PrepTimeMinutes = 75, CategoryId = 2,
             Ingredients = new List<Ingredient>
             {
-                new Ingredient { Name = "mięso na rosół", Amount = 1, Unit = "kg" },
-                new Ingredient { Name = "włoszczyzna", Amount = 1, Unit = "szt." },
-                new Ingredient { Name = "liść laurowy", Amount = 2, Unit = "szt." },
-                new Ingredient { Name = "ziele angielskie", Amount = 4, Unit = "szt." },
-                new Ingredient { Name = "sól", Amount = 2, Unit = "łyżeczka" },
-                new Ingredient { Name = "makaron", Amount = 200, Unit = "g" },
-                new Ingredient { Name = "natka pietruszki", Amount = 1, Unit = "łyżka" }
+                Skl("mąka", 3, "szklanka"), Skl("woda", 1, "szklanka"), Skl("ziemniaki", 0.5, "kg"),
+                Skl("twaróg", 250, "g"), Skl("cebula", 1, "szt."), Skl("sól", 1, "łyżeczka"),
+                Skl("pieprz", 1, "szczypta")
+            },
+            Steps = new List<string>
+            {
+                "Zagnieć ciasto z mąki, wody i szczypty soli.",
+                "Ugotuj ziemniaki i wymieszaj z twarogiem oraz podsmażoną cebulą.",
+                "Lep pierogi i gotuj w osolonej wodzie do wypłynięcia.",
+                "Podawaj okraszone cebulką."
+            }
+        },
+        new Recipe
+        {
+            Id = 7, Title = "Rosół z makaronem", ImageUrl = "/images/rosol.svg",
+            PrepTimeMinutes = 90, CategoryId = 3,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("mięso na rosół", 1, "kg"), Skl("włoszczyzna", 1, "szt."),
+                Skl("liść laurowy", 2, "szt."), Skl("ziele angielskie", 4, "szt."),
+                Skl("sól", 2, "łyżeczka"), Skl("makaron", 200, "g"), Skl("natka pietruszki", 1, "łyżka")
             },
             Steps = new List<string>
             {
@@ -173,20 +173,13 @@ public class HomeController : Controller
         },
         new Recipe
         {
-            Id = 6,
-            Title = "Zupa pomidorowa",
-            ImageUrl = "/images/pomidorowa.svg",
-            PrepTimeMinutes = 40,
-            CategoryId = 3,
+            Id = 8, Title = "Zupa pomidorowa", ImageUrl = "/images/pomidorowa.svg",
+            PrepTimeMinutes = 40, CategoryId = 3,
             Ingredients = new List<Ingredient>
             {
-                new Ingredient { Name = "passata pomidorowa", Amount = 500, Unit = "ml" },
-                new Ingredient { Name = "bulion warzywny", Amount = 1, Unit = "l" },
-                new Ingredient { Name = "śmietana", Amount = 200, Unit = "ml" },
-                new Ingredient { Name = "ryż", Amount = 100, Unit = "g" },
-                new Ingredient { Name = "sól", Amount = 1, Unit = "łyżeczka" },
-                new Ingredient { Name = "pieprz", Amount = 1, Unit = "szczypta" },
-                new Ingredient { Name = "cukier", Amount = 1, Unit = "łyżeczka" }
+                Skl("passata pomidorowa", 500, "ml"), Skl("bulion warzywny", 1, "l"),
+                Skl("śmietana", 200, "ml"), Skl("ryż", 100, "g"), Skl("sól", 1, "łyżeczka"),
+                Skl("pieprz", 1, "szczypta"), Skl("cukier", 1, "łyżeczka")
             },
             Steps = new List<string>
             {
@@ -198,19 +191,30 @@ public class HomeController : Controller
         },
         new Recipe
         {
-            Id = 7,
-            Title = "Sernik tradycyjny",
-            ImageUrl = "/images/sernik.svg",
-            PrepTimeMinutes = 80,
-            CategoryId = 4,
+            Id = 9, Title = "Żurek staropolski", ImageUrl = "/images/zurek.svg",
+            PrepTimeMinutes = 60, CategoryId = 3,
             Ingredients = new List<Ingredient>
             {
-                new Ingredient { Name = "twaróg", Amount = 1, Unit = "kg" },
-                new Ingredient { Name = "jajka", Amount = 5, Unit = "szt." },
-                new Ingredient { Name = "cukier", Amount = 1, Unit = "szklanka" },
-                new Ingredient { Name = "masło", Amount = 200, Unit = "g" },
-                new Ingredient { Name = "budyń waniliowy", Amount = 1, Unit = "szt." },
-                new Ingredient { Name = "spód z ciastek", Amount = 1, Unit = "szt." }
+                Skl("zakwas na żurek", 500, "ml"), Skl("kiełbasa biała", 300, "g"),
+                Skl("jajka", 2, "szt."), Skl("ziemniaki", 0.5, "kg"), Skl("czosnek", 2, "ząbek"),
+                Skl("majeranek", 1, "łyżeczka"), Skl("śmietana", 100, "ml")
+            },
+            Steps = new List<string>
+            {
+                "Ugotuj kiełbasę w wodzie z czosnkiem.",
+                "Wlej zakwas i zagotuj, mieszając.",
+                "Dopraw majerankiem i zabiel śmietaną.",
+                "Podawaj z jajkiem i ziemniakami."
+            }
+        },
+        new Recipe
+        {
+            Id = 10, Title = "Sernik tradycyjny", ImageUrl = "/images/sernik.svg",
+            PrepTimeMinutes = 80, CategoryId = 4,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("twaróg", 1, "kg"), Skl("jajka", 5, "szt."), Skl("cukier", 1, "szklanka"),
+                Skl("masło", 200, "g"), Skl("budyń waniliowy", 1, "szt."), Skl("spód z ciastek", 1, "szt.")
             },
             Steps = new List<string>
             {
@@ -222,20 +226,13 @@ public class HomeController : Controller
         },
         new Recipe
         {
-            Id = 8,
-            Title = "Szarlotka",
-            ImageUrl = "/images/szarlotka.svg",
-            PrepTimeMinutes = 70,
-            CategoryId = 4,
+            Id = 11, Title = "Szarlotka", ImageUrl = "/images/szarlotka.svg",
+            PrepTimeMinutes = 70, CategoryId = 4,
             Ingredients = new List<Ingredient>
             {
-                new Ingredient { Name = "mąka", Amount = 3, Unit = "szklanka" },
-                new Ingredient { Name = "masło", Amount = 200, Unit = "g" },
-                new Ingredient { Name = "cukier", Amount = 1, Unit = "szklanka" },
-                new Ingredient { Name = "jajka", Amount = 1, Unit = "szt." },
-                new Ingredient { Name = "proszek do pieczenia", Amount = 1, Unit = "łyżeczka" },
-                new Ingredient { Name = "jabłka", Amount = 1, Unit = "kg" },
-                new Ingredient { Name = "cynamon", Amount = 1, Unit = "łyżeczka" }
+                Skl("mąka", 3, "szklanka"), Skl("masło", 200, "g"), Skl("cukier", 1, "szklanka"),
+                Skl("jajka", 1, "szt."), Skl("proszek do pieczenia", 1, "łyżeczka"),
+                Skl("jabłka", 1, "kg"), Skl("cynamon", 1, "łyżeczka")
             },
             Steps = new List<string>
             {
@@ -243,6 +240,219 @@ public class HomeController : Controller
                 "Zetrzyj jabłka i poddusz z cynamonem.",
                 "Wyłóż połowę ciasta, dodaj jabłka i przykryj resztą ciasta.",
                 "Piecz około 50 minut w 180°C."
+            }
+        },
+        new Recipe
+        {
+            Id = 12, Title = "Brownie czekoladowe", ImageUrl = "/images/brownie.svg",
+            PrepTimeMinutes = 50, CategoryId = 4,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("czekolada gorzka", 200, "g"), Skl("masło", 150, "g"), Skl("cukier", 1, "szklanka"),
+                Skl("jajka", 3, "szt."), Skl("mąka", 1, "szklanka"), Skl("kakao", 2, "łyżka")
+            },
+            Steps = new List<string>
+            {
+                "Rozpuść czekoladę z masłem.",
+                "Dodaj cukier, jajka, mąkę i kakao, wymieszaj.",
+                "Przelej do formy.",
+                "Piecz około 30 minut w 180°C."
+            }
+        },
+        new Recipe
+        {
+            Id = 13, Title = "Sałatka grecka", ImageUrl = "/images/salatka-grecka.svg",
+            PrepTimeMinutes = 15, CategoryId = 5,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("pomidory", 3, "szt."), Skl("ogórek", 1, "szt."), Skl("ser feta", 200, "g"),
+                Skl("oliwki", 100, "g"), Skl("cebula czerwona", 1, "szt."),
+                Skl("oliwa z oliwek", 3, "łyżka"), Skl("oregano", 1, "łyżeczka")
+            },
+            Steps = new List<string>
+            {
+                "Pokrój pomidory, ogórka i cebulę.",
+                "Dodaj pokrojoną fetę i oliwki.",
+                "Skrop oliwą i posyp oregano."
+            }
+        },
+        new Recipe
+        {
+            Id = 14, Title = "Sałatka jarzynowa", ImageUrl = "/images/salatka-jarzynowa.svg",
+            PrepTimeMinutes = 40, CategoryId = 5,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("ziemniaki", 0.5, "kg"), Skl("marchew", 3, "szt."), Skl("groszek konserwowy", 1, "szt."),
+                Skl("ogórek kiszony", 3, "szt."), Skl("jajka", 3, "szt."), Skl("majonez", 4, "łyżka"),
+                Skl("sól", 1, "łyżeczka")
+            },
+            Steps = new List<string>
+            {
+                "Ugotuj ziemniaki, marchew i jajka, ostudź.",
+                "Pokrój wszystko w drobną kostkę.",
+                "Dodaj groszek, ogórki i majonez.",
+                "Wymieszaj i dopraw solą."
+            }
+        },
+        new Recipe
+        {
+            Id = 15, Title = "Sałatka z tuńczykiem", ImageUrl = "/images/salatka-tunczyk.svg",
+            PrepTimeMinutes = 15, CategoryId = 5,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("tuńczyk", 1, "szt."), Skl("kukurydza", 1, "szt."), Skl("sałata", 1, "szt."),
+                Skl("pomidory", 2, "szt."), Skl("majonez", 2, "łyżka"), Skl("sól", 1, "szczypta")
+            },
+            Steps = new List<string>
+            {
+                "Porwij sałatę i ułóż w misce.",
+                "Dodaj tuńczyka, kukurydzę i pokrojone pomidory.",
+                "Wymieszaj z majonezem i dopraw."
+            }
+        },
+        new Recipe
+        {
+            Id = 16, Title = "Kanapki z serem i szynką", ImageUrl = "/images/kanapki.svg",
+            PrepTimeMinutes = 10, CategoryId = 6,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("chleb", 4, "szt."), Skl("masło", 1, "łyżka"), Skl("ser żółty", 4, "szt."),
+                Skl("szynka", 4, "szt."), Skl("pomidory", 1, "szt."), Skl("sałata", 1, "szt.")
+            },
+            Steps = new List<string>
+            {
+                "Posmaruj chleb masłem.",
+                "Ułóż ser, szynkę i plasterki pomidora.",
+                "Dodaj liść sałaty i przykryj kromką."
+            }
+        },
+        new Recipe
+        {
+            Id = 17, Title = "Tosty z serem", ImageUrl = "/images/tosty.svg",
+            PrepTimeMinutes = 10, CategoryId = 6,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("chleb tostowy", 4, "szt."), Skl("ser żółty", 4, "szt."),
+                Skl("szynka", 2, "szt."), Skl("masło", 1, "łyżka")
+            },
+            Steps = new List<string>
+            {
+                "Posmaruj chleb masłem.",
+                "Włóż ser i szynkę między kromki.",
+                "Zapiekaj w opiekaczu do zrumienienia."
+            }
+        },
+        new Recipe
+        {
+            Id = 18, Title = "Omlet z warzywami", ImageUrl = "/images/omlet.svg",
+            PrepTimeMinutes = 15, CategoryId = 6,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("jajka", 3, "szt."), Skl("papryka", 1, "szt."), Skl("pomidory", 1, "szt."),
+                Skl("szczypiorek", 1, "łyżka"), Skl("sól", 1, "szczypta"), Skl("olej", 1, "łyżka")
+            },
+            Steps = new List<string>
+            {
+                "Roztrzep jajka z solą.",
+                "Wlej na patelnię z olejem.",
+                "Dodaj pokrojoną paprykę i pomidora.",
+                "Smaż do ścięcia i posyp szczypiorkiem."
+            }
+        },
+        new Recipe
+        {
+            Id = 19, Title = "Koktajl bananowy", ImageUrl = "/images/koktajl.svg",
+            PrepTimeMinutes = 5, CategoryId = 7,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("banan", 2, "szt."), Skl("mleko", 1, "szklanka"),
+                Skl("jogurt naturalny", 150, "g"), Skl("miód", 1, "łyżka")
+            },
+            Steps = new List<string>
+            {
+                "Obierz banany i włóż do blendera.",
+                "Dodaj mleko, jogurt i miód.",
+                "Zmiksuj na gładko i podawaj schłodzony."
+            }
+        },
+        new Recipe
+        {
+            Id = 20, Title = "Lemoniada cytrynowa", ImageUrl = "/images/lemoniada.svg",
+            PrepTimeMinutes = 10, CategoryId = 7,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("cytryna", 3, "szt."), Skl("woda", 1, "l"), Skl("cukier", 4, "łyżka"),
+                Skl("mięta", 1, "szt."), Skl("lód", 100, "g")
+            },
+            Steps = new List<string>
+            {
+                "Wyciśnij sok z cytryn.",
+                "Rozpuść cukier w wodzie.",
+                "Połącz sok, wodę, miętę i lód."
+            }
+        },
+        new Recipe
+        {
+            Id = 21, Title = "Herbata imbirowa", ImageUrl = "/images/herbata.svg",
+            PrepTimeMinutes = 10, CategoryId = 7,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("imbir", 1, "szt."), Skl("cytryna", 1, "szt."), Skl("miód", 2, "łyżka"),
+                Skl("woda", 0.5, "l")
+            },
+            Steps = new List<string>
+            {
+                "Zagotuj wodę z plasterkami imbiru.",
+                "Dodaj sok z cytryny.",
+                "Posłodź miodem i podawaj na ciepło."
+            }
+        },
+        new Recipe
+        {
+            Id = 22, Title = "Hummus", ImageUrl = "/images/hummus.svg",
+            PrepTimeMinutes = 15, CategoryId = 8,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("ciecierzyca", 1, "szt."), Skl("tahini", 2, "łyżka"), Skl("czosnek", 1, "ząbek"),
+                Skl("cytryna", 1, "szt."), Skl("oliwa z oliwek", 3, "łyżka"), Skl("kmin rzymski", 1, "łyżeczka")
+            },
+            Steps = new List<string>
+            {
+                "Odsącz ciecierzycę.",
+                "Zmiksuj z tahini, czosnkiem, sokiem z cytryny i oliwą.",
+                "Dopraw kminem i podawaj z pieczywem."
+            }
+        },
+        new Recipe
+        {
+            Id = 23, Title = "Placki ziemniaczane", ImageUrl = "/images/placki.svg",
+            PrepTimeMinutes = 35, CategoryId = 8,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("ziemniaki", 1, "kg"), Skl("cebula", 1, "szt."), Skl("jajka", 1, "szt."),
+                Skl("mąka", 3, "łyżka"), Skl("sól", 1, "łyżeczka"), Skl("olej", 100, "ml")
+            },
+            Steps = new List<string>
+            {
+                "Zetrzyj ziemniaki i cebulę.",
+                "Dodaj jajko, mąkę i sól, wymieszaj.",
+                "Smaż placki na rozgrzanym oleju z obu stron."
+            }
+        },
+        new Recipe
+        {
+            Id = 24, Title = "Frytki z piekarnika", ImageUrl = "/images/frytki.svg",
+            PrepTimeMinutes = 40, CategoryId = 8,
+            Ingredients = new List<Ingredient>
+            {
+                Skl("ziemniaki", 1, "kg"), Skl("oliwa z oliwek", 3, "łyżka"), Skl("sól", 1, "łyżeczka"),
+                Skl("papryka słodka", 1, "łyżeczka")
+            },
+            Steps = new List<string>
+            {
+                "Pokrój ziemniaki w słupki.",
+                "Wymieszaj z oliwą, solą i papryką.",
+                "Piecz około 30 minut w 200°C, raz przewracając."
             }
         }
     };
@@ -259,9 +469,9 @@ public class HomeController : Controller
     // Strona główna — lista wszystkich przepisów w formie kart.
     public IActionResult Index()
     {
-        PrzypiszKategorie(Recipes);       // dopisz kategorie do przepisów
+        PrzypiszKategorie(Recipes);
         ViewBag.Categories = Categories;  // lista kategorii potrzebna do przycisków filtra
-        return View(Recipes);             // przekaż listę przepisów do widoku
+        return View(Recipes);
     }
 
     // Widok pojedynczego przepisu — pełna karta ze składnikami i krokami.
@@ -278,22 +488,20 @@ public class HomeController : Controller
     }
 
     // Formularz dodawania nowego przepisu.
-    // UWAGA: obsługa wysyłki (zapis) jest po stronie JavaScript i tylko na ekranie —
-    // trwałe zapisywanie do bazy dorobi backend.
+    // UWAGA: podgląd i obsługa składników są po stronie JavaScript.
+    // Składniki wpisuje się w polu tekstowym z podpowiedziami (datalist z pliku JSON).
     public IActionResult Add()
     {
-        ViewBag.Categories = Categories;        // kategorie do listy rozwijanej
-        ViewBag.AllIngredients = AllIngredients; // dostępne składniki
-        ViewBag.Units = Units;                   // dostępne jednostki
+        ViewBag.Categories = Categories; // kategorie do listy rozwijanej
+        ViewBag.Units = Units;           // dostępne jednostki
         return View();
     }
 
-    // "Co mam w lodówce" — użytkownik zaznacza składniki, a JavaScript pokazuje pasujące przepisy.
+    // "Co mam w lodówce" — użytkownik wpisuje swoje składniki, a JavaScript pokazuje pasujące przepisy.
     public IActionResult Fridge()
     {
         PrzypiszKategorie(Recipes);
-        ViewBag.AllIngredients = AllIngredients; // składniki do zaznaczenia
-        return View(Recipes);                    // przepisy do przeszukania po stronie przeglądarki
+        return View(Recipes); // przepisy do przeszukania po stronie przeglądarki
     }
 
     // Prosta strona informacyjna o serwisie.

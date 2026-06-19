@@ -1,39 +1,46 @@
-﻿@model Techniki_Internetowe_Proj.ViewModels.RegisterViewModel
+@* Widok rejestracji. Logikę i walidację (tagi asp-) zrobił kolega z backendu —
+   NIE ruszamy tagów asp-. Tu dokładamy tylko warstwę wizualną (style SmaczaPL). *@
+@model Techniki_Internetowe_Proj.ViewModels.RegisterViewModel
 
 @{
     ViewData["Title"] = "Rejestracja";
 }
 
-<h2>Formularz Rejestracji (Szkielet Backendowy)</h2>
+<section class="auth-page">
+    <div class="auth-card">
+        <h1>Załóż konto</h1>
+        <p class="auth-sub">Dołącz do SmaczaPL i zapisuj swoje przepisy 🍽️</p>
 
-<form asp-action="Register" method="post">
-    <div asp-validation-summary="All" style="color:red; font-weight:bold;"></div>
+        <form asp-action="Register" method="post" class="auth-form">
+            <div asp-validation-summary="All" class="auth-validation"></div>
 
-    <div style="margin-bottom: 15px;">
-        <label asp-for="Email"></label><br />
-        <input asp-for="Email" style="width: 300px; padding: 5px;" />
-        <span asp-validation-for="Email" style="color:red;"></span>
+            <div class="form-row">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="auth-input" />
+                <span asp-validation-for="Email" class="field-error"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="auth-input" />
+                <span asp-validation-for="Password" class="field-error"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="auth-input" />
+                <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+            </div>
+
+            <button type="submit" class="hero-btn hero-btn-primary auth-submit">Zarejestruj konto</button>
+        </form>
+
+        <p class="auth-switch">Masz już konto? <a asp-controller="Account" asp-action="Login">Zaloguj się</a></p>
     </div>
-
-    <div style="margin-bottom: 15px;">
-        <label asp-for="Password"></label><br />
-        <input asp-for="Password" style="width: 300px; padding: 5px;" />
-        <span asp-validation-for="Password" style="color:red;"></span>
-    </div>
-
-    <div style="margin-bottom: 15px;">
-        <label asp-for="ConfirmPassword"></label><br />
-        <input asp-for="ConfirmPassword" style="width: 300px; padding: 5px;" />
-        <span asp-validation-for="ConfirmPassword" style="color:red;"></span>
-    </div>
-
-    <button type="submit" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer;">
-        Zarejestruj konto
-    </button>
-</form>
+</section>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @* jQuery + skrypty walidacji TYLKO na tej stronie (globalny layout zostaje bez jQuery) *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
 }

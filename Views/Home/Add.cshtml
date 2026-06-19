@@ -1,9 +1,10 @@
 @* Strona z formularzem dodawania przepisu.
-   Obsługa wysyłki jest w czystym JavaScript (add-recipe.js) i tylko na ekranie. *@
+   Składniki wpisuje się w polu tekstowym z podpowiedziami (datalist z bazy JSON).
+   UWAGA: formularz ma podpięty przez kolegę (backend) POST do Recipe/UploadImage
+   oraz pole na zdjęcie — tagów asp- i pola pliku NIE ruszamy. *@
 @{
     ViewData["Title"] = "Dodaj przepis";
     var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
-    var allIngredients = ViewBag.AllIngredients as List<string> ?? new List<string>();
     var units = ViewBag.Units as List<string> ?? new List<string>();
 }
 
@@ -11,7 +12,7 @@
     <h1>Dodaj przepis</h1>
     <p class="form-note">
         Uwaga: to wersja frontendowa — dodany przepis pojawi się tylko na tej stronie
-        (na potrzeby podglądu) i zniknie po odświeżeniu. Trwałe zapisywanie do bazy dorobi backend.
+        (na potrzeby podglądu). Trwałe zapisywanie do bazy i obsługę zdjęcia dorobi backend.
     </p>
 
     <form id="addRecipeForm" class="recipe-form" asp-controller="Recipe" asp-action="UploadImage" method="post" enctype="multipart/form-data">
@@ -35,6 +36,8 @@
                 <input type="number" id="recipeTime" min="1" value="30" required />
             </div>
         </div>
+
+        @* Pole na zdjęcie dodane przez kolegę (backend) — zostawiamy *@
         <div class="form-row">
             <label for="imageFile">Zdjęcie przepisu</label>
             <input type="file" id="imageFile" name="imageFile" accept="image/*" class="form-control" />
@@ -55,15 +58,14 @@
         <button type="submit" class="hero-btn hero-btn-primary">Dodaj przepis</button>
     </form>
 
-    @* Szablon jednego wiersza składnika — JavaScript go klonuje przy dodawaniu *@
+    @* Lista podpowiedzi składników (wypełnia ją JavaScript z pliku JSON) *@
+    <datalist id="ingredientsDatalist"></datalist>
+
+    @* Szablon jednego wiersza składnika — JavaScript go klonuje przy dodawaniu.
+       Nazwa składnika to POLE TEKSTOWE z podpowiedziami (list="ingredientsDatalist"). *@
     <template id="ingredientRowTemplate">
         <div class="ingredient-row">
-            <select class="ing-name" aria-label="Składnik">
-                @foreach (var ing in allIngredients)
-                {
-                    <option value="@ing">@ing</option>
-                }
-            </select>
+            <input type="text" class="ing-name" list="ingredientsDatalist" placeholder="wpisz składnik..." aria-label="Składnik" />
             <input type="number" class="ing-amount" min="0" step="any" value="1" aria-label="Ilość" />
             <select class="ing-unit" aria-label="Jednostka">
                 @foreach (var u in units)
@@ -84,5 +86,6 @@
 </section>
 
 @section Scripts {
+    <script src="~/js/ingredients-datalist.js" asp-append-version="true"></script>
     <script src="~/js/add-recipe.js" asp-append-version="true"></script>
 }
