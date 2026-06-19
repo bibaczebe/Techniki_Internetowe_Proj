@@ -16,6 +16,18 @@
     @* NAGŁÓWEK STRONY z górnym menu *@
     <header>
         <nav class="navbar navbar-expand-sm smacza-navbar">
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <span class="nav-user">@User.Identity.Name</span>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                    <button type="submit" class="hero-btn">Wyloguj</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login">Zaloguj się</a>
+                <a asp-controller="Account" asp-action="Register">Zarejestruj się</a>
+            }
             <div class="container">
                 <a class="navbar-brand smacza-brand" asp-controller="Home" asp-action="Index">🍳 SmaczaPL</a>
                 @* Przycisk "hamburger" widoczny na telefonach (obsługiwany przez Bootstrap) *@
