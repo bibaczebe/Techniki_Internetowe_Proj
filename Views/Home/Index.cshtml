@@ -7,6 +7,12 @@
     var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
 }
 
+@* Komunikat po dodaniu przepisu (przekazany przez TempData z akcji Add) *@
+@if (TempData["Added"] != null)
+{
+    <div class="form-note" role="status">✓ @TempData["Added"]</div>
+}
+
 @* Sekcja powitalna *@
 <section class="hero">
     <h1>Witaj w SmaczaPL 🍽️</h1>

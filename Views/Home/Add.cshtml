@@ -1,7 +1,7 @@
 @* Strona z formularzem dodawania przepisu.
    Składniki wpisuje się w polu tekstowym z podpowiedziami (datalist z bazy JSON).
-   UWAGA: formularz ma podpięty przez kolegę (backend) POST do Recipe/UploadImage
-   oraz pole na zdjęcie — tagów asp- i pola pliku NIE ruszamy. *@
+   Formularz wysyła dane na serwer (POST Home/Add): przepis zapisuje się i od razu
+   pojawia na stronie głównej. JavaScript obsługuje tylko dynamiczne dodawanie składników. *@
 @{
     ViewData["Title"] = "Dodaj przepis";
     var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
@@ -11,20 +11,23 @@
 <section class="form-page">
     <h1>Dodaj przepis</h1>
     <p class="form-note">
-        Uwaga: to wersja frontendowa — dodany przepis pojawi się tylko na tej stronie
-        (na potrzeby podglądu). Trwałe zapisywanie do bazy i obsługę zdjęcia dorobi backend.
+        Po zapisaniu przepis pojawi się na stronie głównej. Zdjęcie jest opcjonalne —
+        gdy go nie dodasz, użyjemy domyślnej grafiki.
     </p>
 
-    <form id="addRecipeForm" class="recipe-form" asp-controller="Recipe" asp-action="UploadImage" method="post" enctype="multipart/form-data">
+    @* Komunikaty błędów z serwera (np. zbyt krótka nazwa) *@
+    <div asp-validation-summary="All" class="auth-validation"></div>
+
+    <form id="addRecipeForm" class="recipe-form" asp-controller="Home" asp-action="Add" method="post" enctype="multipart/form-data">
         <div class="form-row">
             <label for="recipeTitle">Nazwa dania</label>
-            <input type="text" id="recipeTitle" placeholder="np. Omlet z warzywami" required />
+            <input type="text" id="recipeTitle" name="Title" placeholder="np. Omlet z warzywami" required />
         </div>
 
         <div class="form-grid-2">
             <div class="form-row">
                 <label for="recipeCategory">Kategoria</label>
-                <select id="recipeCategory" required>
+                <select id="recipeCategory" name="Category" required>
                     @foreach (var c in categories)
                     {
                         <option value="@c.Name">@c.Name</option>
@@ -33,7 +36,7 @@
             </div>
             <div class="form-row">
                 <label for="recipeTime">Czas przygotowania (min)</label>
-                <input type="number" id="recipeTime" min="1" value="30" required />
+                <input type="number" id="recipeTime" name="PrepTime" min="1" value="30" required />
             </div>
         </div>
 
@@ -52,7 +55,7 @@
 
         <div class="form-row">
             <label for="recipeSteps">Kroki przygotowania (jeden krok w linii)</label>
-            <textarea id="recipeSteps" rows="4" placeholder="Pokrój warzywa...&#10;Usmaż na patelni..."></textarea>
+            <textarea id="recipeSteps" name="Steps" rows="4" placeholder="Pokrój warzywa...&#10;Usmaż na patelni..."></textarea>
         </div>
 
         <button type="submit" class="hero-btn hero-btn-primary">Dodaj przepis</button>
@@ -62,12 +65,12 @@
     <datalist id="ingredientsDatalist"></datalist>
 
     @* Szablon jednego wiersza składnika — JavaScript go klonuje przy dodawaniu.
-       Nazwa składnika to POLE TEKSTOWE z podpowiedziami (list="ingredientsDatalist"). *@
+       Atrybuty name="..." sprawiają, że po sklonowaniu wiersze wysyłają się jako tablice. *@
     <template id="ingredientRowTemplate">
         <div class="ingredient-row">
-            <input type="text" class="ing-name" list="ingredientsDatalist" placeholder="wpisz składnik..." aria-label="Składnik" />
-            <input type="number" class="ing-amount" min="0" step="any" value="1" aria-label="Ilość" />
-            <select class="ing-unit" aria-label="Jednostka">
+            <input type="text" class="ing-name" name="IngredientNames" list="ingredientsDatalist" placeholder="wpisz składnik..." aria-label="Składnik" />
+            <input type="number" class="ing-amount" name="IngredientAmounts" min="0" step="any" value="1" aria-label="Ilość" />
+            <select class="ing-unit" name="IngredientUnits" aria-label="Jednostka">
                 @foreach (var u in units)
                 {
                     <option value="@u">@u</option>
@@ -76,13 +79,6 @@
             <button type="button" class="ing-remove" aria-label="Usuń składnik">✕</button>
         </div>
     </template>
-
-    @* Podgląd dodanych przepisów (wypełniany przez JavaScript) *@
-    <section class="preview-section" aria-label="Dodane przepisy">
-        <h2>Twoje dodane przepisy</h2>
-        <p id="previewEmpty">Nie dodałeś jeszcze żadnego przepisu.</p>
-        <div class="recipe-grid" id="previewGrid"></div>
-    </section>
 </section>
 
 @section Scripts {

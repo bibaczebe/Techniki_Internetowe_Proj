@@ -1,4 +1,8 @@
 using System.Diagnostics;
+using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Techniki_Internetowe_Proj.Models;
 
@@ -7,10 +11,15 @@ namespace Techniki_Internetowe_Proj.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IWebHostEnvironment _env;
 
-    public HomeController(ILogger<HomeController> logger)
+    // Blokada przy dopisywaniu do współdzielonej (statycznej) listy przepisów.
+    private static readonly object _recipesLock = new object();
+
+    public HomeController(ILogger<HomeController> logger, IWebHostEnvironment env)
     {
         _logger = logger;
+        _env = env;
     }
 
     // ================================================================
@@ -488,13 +497,122 @@ public class HomeController : Controller
     }
 
     // Formularz dodawania nowego przepisu.
-    // UWAGA: podgląd i obsługa składników są po stronie JavaScript.
-    // Składniki wpisuje się w polu tekstowym z podpowiedziami (datalist z pliku JSON).
+    // Składniki dodaje się dynamicznie (JavaScript), wpisując nazwę z podpowiedziami (datalist).
+    // [Authorize] => tę stronę widzą TYLKO zalogowani; gość zostaje przekierowany na logowanie.
+    [Authorize]
     public IActionResult Add()
     {
         ViewBag.Categories = Categories; // kategorie do listy rozwijanej
         ViewBag.Units = Units;           // dostępne jednostki
         return View();
+    }
+
+    // Zapisanie nowego przepisu wysłanego z formularza.
+    // Przepis trafia do współdzielonej listy, więc OD RAZU widać go na stronie głównej.
+    // Składniki przychodzą jako trzy równoległe tablice (nazwa / ilość / jednostka).
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Add(
+        string Title,
+        string Category,
+        int PrepTime,
+        string[]? IngredientNames,
+        string[]? IngredientAmounts,
+        string[]? IngredientUnits,
+        string? Steps,
+        IFormFile? imageFile)
+    {
+        // Minimalna walidacja po stronie serwera (nazwa min. 3 znaki, realny czas).
+        if (string.IsNullOrWhiteSpace(Title) || Title.Trim().Length < 3)
+        {
+            ModelState.AddModelError(string.Empty, "Podaj nazwę dania (przynajmniej 3 znaki).");
+        }
+        if (PrepTime < 1)
+        {
+            ModelState.AddModelError(string.Empty, "Podaj poprawny czas przygotowania.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Categories = Categories;
+            ViewBag.Units = Units;
+            return View();
+        }
+
+        // Składniki: łączymy trzy tablice po indeksie, pomijając puste nazwy.
+        var ingredients = new List<Ingredient>();
+        if (IngredientNames != null)
+        {
+            for (int i = 0; i < IngredientNames.Length; i++)
+            {
+                var name = IngredientNames[i]?.Trim();
+                if (string.IsNullOrEmpty(name)) continue;
+
+                // Ilość: akceptujemy kropkę i przecinek; gdy się nie uda — domyślnie 1.
+                double amount = 1;
+                if (IngredientAmounts != null && i < IngredientAmounts.Length)
+                {
+                    var raw = (IngredientAmounts[i] ?? "").Replace(',', '.');
+                    if (!double.TryParse(raw, NumberStyles.Any, CultureInfo.InvariantCulture, out amount) || amount <= 0)
+                    {
+                        amount = 1;
+                    }
+                }
+
+                var unit = (IngredientUnits != null && i < IngredientUnits.Length)
+                    ? (IngredientUnits[i] ?? "")
+                    : "";
+
+                ingredients.Add(new Ingredient { Name = name, Amount = amount, Unit = unit });
+            }
+        }
+
+        // Kroki: każda niepusta linia z pola tekstowego to osobny krok.
+        var steps = (Steps ?? "")
+            .Replace("\r\n", "\n")
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+
+        // Kategoria przychodzi jako nazwa — zamieniamy ją na obiekt/Id (gdy brak: pierwsza).
+        var category = Categories.FirstOrDefault(c => c.Name == Category) ?? Categories.First();
+
+        // Zdjęcie: jeśli wgrano plik, zapisujemy go w wwwroot/images; inaczej placeholder.
+        string imageUrl = "/images/placeholder.svg";
+        if (imageFile != null && imageFile.Length > 0)
+        {
+            var uploadsFolder = Path.Combine(_env.WebRootPath, "images");
+            Directory.CreateDirectory(uploadsFolder);
+
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
+            imageUrl = "/images/" + fileName;
+        }
+
+        // Dopisujemy przepis do listy (z blokadą — lista jest współdzielona).
+        lock (_recipesLock)
+        {
+            int newId = Recipes.Count > 0 ? Recipes.Max(r => r.Id) + 1 : 1;
+            Recipes.Add(new Recipe
+            {
+                Id = newId,
+                Title = Title.Trim(),
+                ImageUrl = imageUrl,
+                PrepTimeMinutes = PrepTime,
+                CategoryId = category.Id,
+                Category = category,
+                Ingredients = ingredients,
+                Steps = steps
+            });
+        }
+
+        // Komunikat dla strony głównej + przekierowanie tam, żeby od razu zobaczyć nowy przepis.
+        TempData["Added"] = $"Dodano przepis: {Title.Trim()}";
+        return RedirectToAction(nameof(Index));
     }
 
     // "Co mam w lodówce" — użytkownik wpisuje swoje składniki, a JavaScript pokazuje pasujące przepisy.
